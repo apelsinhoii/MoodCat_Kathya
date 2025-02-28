@@ -1,2 +1,2 @@
 # MoodCat
-MoodCat - Personal content assistant to make your day
+Personal content assistant to make your day
