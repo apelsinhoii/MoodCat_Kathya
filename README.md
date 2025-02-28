@@ -1,2 +1,2 @@
 # MoodCat
-Group project for uni
+MoodCat - Personal content assistant to make your day
