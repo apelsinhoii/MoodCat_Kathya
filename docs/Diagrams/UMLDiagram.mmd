@@ -1,0 +1,38 @@
+graph TD
+    StartSession --> Greeting
+    
+    Greeting --> ChooseMood
+    Greeting --> Settings
+    Greeting --> Activity
+    Greeting --> EndSession
+
+    Activity --> ShowStats
+    Settings --> On/Off_Stats
+    Settings --> On/Off_History
+
+    ChooseMood ---> Happy
+    ChooseMood ---> Sad
+    ChooseMood ---> Angry
+    ChooseMood ---> Tired
+    ChooseMood ---> Calm
+
+    Happy --> ChooseContent
+    Sad --> ChooseContent
+    Angry --> ChooseContent
+    Tired --> ChooseContent
+    Calm --> ChooseContent
+
+    ChooseContent --> Films
+    ChooseContent --> Pictures
+    ChooseContent --> CatMemes
+
+    Films --> GenerateContent
+    Pictures --> GenerateContent
+    CatMemes --> GenerateContent
+
+    GenerateContent --> AskNext  
+
+    AskNext --> ChooseContent
+    AskNext --> ChooseMood
+    AskNext --> Greeting
+    AskNext --> EndSession
