@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -13,17 +11,17 @@ namespace Test
     class Program
     {
         private static string Token {get; set;} = "7685257153:AAE77imIaHX-T5EyBlCKd8G_H71QI9hAKLA"; //private static readonly string Token = "7685257153:AAE77imIaHX-T5EyBlCKd8G_H71QI9hAKLA";
-        private static TelegramBotClient client;
+        private static TelegramBotClient botClient;
 
         static async Task Main()
         {
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
 
-            client = new TelegramBotClient(Token);
+            botClient = new TelegramBotClient(Token);
             using var cts = new CancellationTokenSource();
 
-            var me = await client.GetMeAsync();
+            var me = await botClient.GetMeAsync();
             Console.WriteLine($"@{me.Username} Запущений... Натисніть Enter щоб зупинити.");
 
             var receiverOptions = new ReceiverOptions
@@ -32,7 +30,9 @@ namespace Test
              DropPendingUpdates = true
             };
 
-            client.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions, cts.Token);
+            botClient.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions, cts.Token);
+
+            //client.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions, cts.Token);
             Console.ReadLine();
             cts.Cancel();
         }
@@ -61,12 +61,11 @@ namespace Test
             {
                 var keyboard = new InlineKeyboardMarkup(new[]
                 {
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData("А", "A"),
-                        InlineKeyboardButton.WithCallbackData("Б", "B"),
-                        InlineKeyboardButton.WithCallbackData("В", "C")
-                    }
+                    
+                      new[]  {InlineKeyboardButton.WithCallbackData("А", "A"),},
+                      new[]  {InlineKeyboardButton.WithCallbackData("Налаштування", "B")},
+                      new[]  {InlineKeyboardButton.WithCallbackData("В", "C")}
+                    
                 });
 
                 await bot.SendTextMessageAsync(message.Chat.Id, "Доброго дня! Виберіть опцію:", replyMarkup: keyboard, cancellationToken: cancellationToken);
@@ -74,7 +73,7 @@ namespace Test
         }
         else if (update.CallbackQuery is { } callbackQuery)
     {
-        string response = callbackQuery.Data switch
+       /* string response = callbackQuery.Data switch
         {
             "A" => "Ви вибрали А! Це чудовий вибір!",
             "B" => "Варіант Б — це цікавий вибір!",
@@ -82,7 +81,36 @@ namespace Test
             _ => "Щось пішло не так..."
         };
 
-        await bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, response, cancellationToken: cancellationToken);
+        await bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, response, cancellationToken: cancellationToken);*/
+        switch (update.CallbackQuery.Data)
+            {
+                case "B":
+                var keyboard = new InlineKeyboardMarkup(new[]
+                {
+                    
+                    InlineKeyboardButton.WithCallbackData("Ввімкнути/вимкнути збір статистики", "BA"),
+                    InlineKeyboardButton.WithCallbackData("Ввімкнути/вимкнути історію", "BB"),
+                    
+                });
+
+                await bot.SendTextMessageAsync(update.CallbackQuery.Message.Chat.Id, "Відкрито налаштування. Виберіть опцію:", replyMarkup: keyboard, cancellationToken: cancellationToken);
+                break;
+
+                case "BA":
+                  await bot.SendTextMessageAsync(update.CallbackQuery.Message.Chat.Id, "Статистика ввімкнута/вимкнута.", cancellationToken: cancellationToken);
+                break;
+
+                case "BB":
+                 await bot.SendTextMessageAsync(update.CallbackQuery.Message.Chat.Id, "Історія чату ввімкнута/вимкнута.", cancellationToken: cancellationToken);
+
+                break;
+
+                default:
+                await bot.SendTextMessageAsync(update.CallbackQuery.Message.Chat.Id, "Щось пішло не так...", cancellationToken: cancellationToken);
+                break;
+            }
+            {
+        };
     }
 }
     private static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
