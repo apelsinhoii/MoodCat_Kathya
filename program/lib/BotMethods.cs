@@ -28,8 +28,7 @@ public static void SwitchHistory()
 
         public static async Task AskNextAsync(ITelegramBotClient bot, long chatId, CancellationToken cancellationToken)
     
-        {
-                           
+        {        
                             var nextOptions = new InlineKeyboardMarkup(
                        [
                            [InlineKeyboardButton.WithCallbackData("Ще контенту!", "E"),],
@@ -38,9 +37,7 @@ public static void SwitchHistory()
                            [InlineKeyboardButton.WithCallbackData("Скінчити сесію", "G"),]
                        ]);
 
-    
-                            await bot.SendMessage(chatId, "Що далі?", replyMarkup: nextOptions, cancellationToken: cancellationToken);
-
+                         await bot.SendMessage(chatId, "Що далі?", replyMarkup: nextOptions, cancellationToken: cancellationToken);
         }
 
         public static void SendContent()
@@ -86,7 +83,7 @@ public static void SwitchHistory()
                 },
                 _ => "Ой-ой! Щось пішло не так..."
             };
-
+            
             await bot.SendMessage(chatId, response, cancellationToken: cancellationToken);
         }
 }
