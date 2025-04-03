@@ -7,8 +7,8 @@ public static InlineKeyboardMarkup menu = new InlineKeyboardMarkup(
                 [
 
                       [InlineKeyboardButton.WithCallbackData("А", "A"),],
-                      [InlineKeyboardButton.WithCallbackData("Налаштування", "B")],
-                      [InlineKeyboardButton.WithCallbackData("В", "C")]
+                      [InlineKeyboardButton.WithCallbackData("B", "B")],
+                      [InlineKeyboardButton.WithCallbackData("Обрати настрій", "C")]
                     
                 ]);
 }
