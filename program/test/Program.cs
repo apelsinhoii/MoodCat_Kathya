@@ -1,3 +1,4 @@
+
 using System;
 using lib;
 using System.Text;
@@ -11,10 +12,13 @@ namespace test
 {
     class Program
     {
+        
 
         private static string Token { get; set; } = "7685257153:AAE77imIaHX-T5EyBlCKd8G_H71QI9hAKLA";
         private static TelegramBotClient? botClient;
         private static object? contentKey;
+        private static Dictionary<long, string> userMoods = new(); 
+
 
 
         static async Task Main()
@@ -24,7 +28,6 @@ namespace test
 
             botClient = new TelegramBotClient(Token);
             using var cts = new CancellationTokenSource();
-
 
             var me = await botClient.GetMe();
 
@@ -70,6 +73,7 @@ namespace test
             else if (update.CallbackQuery is { Message: not null } callbackQuery)
             {
                 long chatId = callbackQuery.Message.Chat.Id;
+
                 /* string response = callbackQuery.Data switch
                  {
                      "A" => "Ви вибрали А! Це чудовий вибір!",
@@ -79,10 +83,12 @@ namespace test
                  };
 
                  await bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, response, cancellationToken: cancellationToken);*/
+
                 switch (callbackQuery.Data)
                 {
 
                     case "A":
+
                  var keyboardA = new InlineKeyboardMarkup(new[]
                  {
                     new[]  {InlineKeyboardButton.WithCallbackData("Activity", "AA"),}, 
@@ -96,15 +102,17 @@ namespace test
                 
                 await bot.SendTextMessageAsync(chatId, "Статистика настрою користувача за тиждень.", cancellationToken: cancellationToken);
                 
-                break;
 
+                 break;
 
+   
                     case "B":
                         var keyboard = new InlineKeyboardMarkup(
+
                         [
 
                             [InlineKeyboardButton.WithCallbackData("Ввімкнути/вимкнути збір статистики", "BA")],
-                    [InlineKeyboardButton.WithCallbackData("Ввімкнути/вимкнути історію", "BB")],
+                            [InlineKeyboardButton.WithCallbackData("Ввімкнути/вимкнути історію", "BB")],
 
                 ]);
 
@@ -122,6 +130,7 @@ namespace test
                         finally
                         {
                             await bot.SendMessage(chatId, "Функція в розробці...", cancellationToken: cancellationToken);
+                        
                         await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
 
                         }
@@ -137,29 +146,72 @@ namespace test
                         }
                         finally
                         {
-                            await bot.SendMessage(chatId, "Функція в розробці...", cancellationToken: cancellationToken);
+                            await bot.SendMessage(chatId, "Функція в розробці...", cancellationToken: cancellationTo
+                                                  
                         await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
 
                         }
 
+
                         break;
 
                     case "C":
-                        var testD = new InlineKeyboardMarkup(new[] { InlineKeyboardButton.WithCallbackData("D", "D") });
-                        await bot.SendMessage(chatId, "D", replyMarkup: testD, cancellationToken: cancellationToken);
 
+                        var moodKeyboard = new InlineKeyboardMarkup(new[]
+                        {
+                            new[] { InlineKeyboardButton.WithCallbackData("Веселий", "HO") },
+                            new[] { InlineKeyboardButton.WithCallbackData("Сумний", "SO") },
+                            new[] { InlineKeyboardButton.WithCallbackData("Злий", "AO") },
+                            new[] { InlineKeyboardButton.WithCallbackData("Виснажений", "TO") },
+                            new[] { InlineKeyboardButton.WithCallbackData("Спокійний", "CO") }
+                        });
+
+                        await bot.SendMessage(chatId, "Такий чудовий день! Який настрій у вас сьогодні?", replyMarkup: moodKeyboard, cancellationToken: cancellationToken);
                         break;
 
-                    case "D":
-                        var testE = new InlineKeyboardMarkup(new[] { InlineKeyboardButton.WithCallbackData("E", "E") });
-                        await bot.SendMessage(chatId, "E", replyMarkup: testE, cancellationToken: cancellationToken);
+                    case "HO":
+                    case "SO":
+                    case "AO":
+                    case "TO":
+                    case "CO":
+                        userMoods[chatId] = callbackQuery.Data;
+                        var contentKeyboard = new InlineKeyboardMarkup(new[]
+                        {
+                            new[] { InlineKeyboardButton.WithCallbackData("Фільми", "MC") },
+                            new[] { InlineKeyboardButton.WithCallbackData("Аніме", "AC") },
+                            new[] { InlineKeyboardButton.WithCallbackData("Фото", "PC") }
+                        });
+
+                        await bot.SendMessage(chatId, $"Ваш настрій встановлено. Що ви хочете переглянути?", 
+                            replyMarkup: contentKeyboard, cancellationToken: cancellationToken);
+                        break;
+
+                    case "MC":
+                        await BotMethod.GenerateContent(bot, chatId, "movies", userMoods, cancellationToken);
+                        break;
+
+                    case "AC":
+                        await BotMethod.GenerateContent(bot, chatId, "anime", userMoods, cancellationToken);
+                        break;
+
+                    case "PC":
+                        await BotMethod.GenerateContent(bot, chatId, "photos", userMoods, cancellationToken);
+
+                       
+
+                    
+
 
                         break;
 
                     case "E":
                         try
                         {
+
+                            
+
                             BotMethod.GenerateContent(contentKey);
+
 
                         }
                         catch
@@ -176,13 +228,19 @@ namespace test
                     [InlineKeyboardButton.WithCallbackData("Скінчити сесію", "G"),]
 
                        ]);
+
+                            
                             await bot.SendMessage(chatId, "Що далі?", replyMarkup: nextOptions, cancellationToken: cancellationToken);
+
                         }
 
                         break;
 
                     case "F":
+
+
                         await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
+
 
                         break;
 
@@ -201,7 +259,9 @@ namespace test
                         break;
 
                     default:
+
                         await bot.SendMessage(chatId, "Щось пішло не так...", cancellationToken: cancellationToken);
+
                         break;
                 }
             }
