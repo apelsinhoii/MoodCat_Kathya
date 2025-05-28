@@ -1,0 +1,14 @@
+# Build artifacts
+bin/
+obj/
+
+
+# User-specific files
+.sln
+.vscode/
+*.user
+*.suo
+
+# VS Code extensions & config
+.vscode/
+*.code-workspace

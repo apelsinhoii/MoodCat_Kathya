@@ -1,15 +1,17 @@
-﻿
-using System;
-using lib;
-using System.Text;
+﻿using System.Text;
+
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Microsoft.AspNetCore.Mvc.ViewFeatures.Buffers;
+using TelegramBot.Bot.Lib.Methods;
+using TelegramBot.Bot.Lib.Keyboards;
 
-namespace test
+
+
+
+namespace TelegramBot
 {
     class Program
     {
@@ -49,7 +51,7 @@ namespace test
             {
                 if (message.Text == "/start")
                 {
-                    await bot.SendMessage(message.Chat.Id, "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
+                    await bot.SendMessage(message.Chat.Id, "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                 }
             }
             else if (update.CallbackQuery is { Message: not null } callbackQuery)
@@ -71,7 +73,7 @@ namespace test
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання… Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
 
-                            await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
+                            await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                         }
 
                     break;
@@ -101,7 +103,7 @@ namespace test
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання…  Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
 
-                            await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
+                            await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                         }
                     break;
 
@@ -118,7 +120,7 @@ namespace test
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання…  Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
 
-                            await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
+                            await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                         }
 
                     break;
@@ -197,7 +199,7 @@ namespace test
 
                     case "F":
 
-                        await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.menu, cancellationToken: cancellationToken);
+                        await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                     
                     break;
 
