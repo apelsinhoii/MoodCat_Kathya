@@ -9,8 +9,6 @@ using TelegramBot.Bot.Lib.Methods;
 using TelegramBot.Bot.Lib.Keyboards;
 
 
-
-
 namespace TelegramBot
 {
     class Program
