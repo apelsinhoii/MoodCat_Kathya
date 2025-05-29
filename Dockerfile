@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Копіюємо .sln та .csproj файли і відновлюємо залежності
 COPY MoodCat.sln ./
-COPY MoodCat_TelegramBot/MoodCat_TelegramBot.csproj ./MoodCat_TelegramBot/
+COPY TelegramBot/TelegramBot.csproj ./TelegramBot/
 RUN dotnet restore
 
 # Копіюємо все і будуємо проєкт
@@ -17,4 +17,4 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 # Вказуємо команду запуску
-ENTRYPOINT ["dotnet", "MoodCat_TelegramBot.dll"]
+ENTRYPOINT ["dotnet", "TelegramBot.dll"]
