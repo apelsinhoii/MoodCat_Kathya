@@ -1,5 +1,4 @@
 ﻿using System.Text;
-
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -8,27 +7,31 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Bot.Lib.Methods;
 using TelegramBot.Bot.Lib.Keyboards;
 
-
 namespace TelegramBot
 {
     class Program
     {
-        private static string Token { get; set; } = "7685257153:AAE77imIaHX-T5EyBlCKd8G_H71QI9hAKLA";
         private static TelegramBotClient? botClient;
         private static object? contentKey;
         private static Dictionary<long, string> userMoods = new();
-
 
         static async Task Main()
         {
             Console.InputEncoding = Encoding.Unicode;
             Console.OutputEncoding = Encoding.Unicode;
 
-            botClient = new TelegramBotClient(Token);
+            string? token = Environment.GetEnvironmentVariable("TOKEN");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                Console.WriteLine("❌ TOKEN не задано! Будь ласка, додай змінну оточення 'TOKEN'.");
+                return;
+            }
+
+            botClient = new TelegramBotClient(token);
             using var cts = new CancellationTokenSource();
 
             var me = await botClient.GetMe();
-
             Console.WriteLine($"@{me.Username} Запущений... Натисніть Enter щоб зупинити.");
 
             var receiverOptions = new ReceiverOptions
@@ -38,7 +41,6 @@ namespace TelegramBot
             };
 
             botClient.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions, cts.Token);
-
             Console.ReadLine();
             cts.Cancel();
         }
@@ -59,72 +61,45 @@ namespace TelegramBot
                 switch (callbackQuery.Data)
                 {
                     case "A":
-
-                        try
-                        {
-                            BotMethod.ViewStatistics();
-                        }
-                        catch
-                        {
-                        }
+                        try { BotMethod.ViewStatistics(); }
+                        catch { }
                         finally
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання… Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
-
                             await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                         }
-
-                    break;
+                        break;
 
                     case "B":
-
                         var keyboard = new InlineKeyboardMarkup(
                         [
                             [InlineKeyboardButton.WithCallbackData("Ввімкнути/вимкнути збір статистики", "BA")],
                             [InlineKeyboardButton.WithCallbackData("Ввімкнути/вимкнути історію", "BB")],
                         ]);
-
                         await bot.SendMessage(chatId, "Налаштування відкрито! Обирай, що змінити:", replyMarkup: keyboard, cancellationToken: cancellationToken);
-                        
-                    break;
+                        break;
 
                     case "BA":
-
-                        try
-                        {
-                            BotMethod.SwitchStatistics();
-                        }
-                        catch
-                        {
-                        }
+                        try { BotMethod.SwitchStatistics(); }
+                        catch { }
                         finally
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання…  Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
-
                             await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                         }
-                    break;
+                        break;
 
                     case "BB":
-
-                        try
-                        {
-                            BotMethod.SwitchHistory();
-                        }
-                        catch
-                        {
-                        }
+                        try { BotMethod.SwitchHistory(); }
+                        catch { }
                         finally
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання…  Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
-
                             await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
                         }
-
-                    break;
+                        break;
 
                     case "C":
-
                         var moodKeyboard = new InlineKeyboardMarkup(new[]
                         {
                             new[] { InlineKeyboardButton.WithCallbackData("Веселий", "HO") },
@@ -135,15 +110,13 @@ namespace TelegramBot
                         });
 
                         await bot.SendMessage(chatId, "Обери свій кото-настрій на сьогодні!:", replyMarkup: moodKeyboard, cancellationToken: cancellationToken);
-                    
-                    break;
+                        break;
 
                     case "HO":
                     case "SO":
                     case "AO":
                     case "TO":
                     case "CO":
-
                         userMoods[chatId] = callbackQuery.Data;
                         var contentKeyboard = new InlineKeyboardMarkup(new[]
                         {
@@ -151,77 +124,50 @@ namespace TelegramBot
                             new[] { InlineKeyboardButton.WithCallbackData("Аніме", "AC") },
                             new[] { InlineKeyboardButton.WithCallbackData("Фото", "PC") }
                         });
-
                         await bot.SendMessage(chatId, $"Ваш настрій зафіксовано! Що бажаєте переглянути?", replyMarkup: contentKeyboard, cancellationToken: cancellationToken);
-
-                    break;
+                        break;
 
                     case "MC":
-
                         await BotMethod.GenerateContent(bot, chatId, "movies", userMoods, cancellationToken);
                         await BotMethod.AskNextAsync(bot, chatId, cancellationToken: cancellationToken);
-
-                    break;
+                        break;
 
                     case "AC":
-
                         await BotMethod.GenerateContent(bot, chatId, "anime", userMoods, cancellationToken);
                         await BotMethod.AskNextAsync(bot, chatId, cancellationToken: cancellationToken);
-
-                    break;
+                        break;
 
                     case "PC":
-
                         await BotMethod.GenerateContent(bot, chatId, "photos", userMoods, cancellationToken);
                         await BotMethod.AskNextAsync(bot, chatId, cancellationToken: cancellationToken);
-                    
-                    break;
+                        break;
 
                     case "E":
-
-                        try
-                        {
-                            BotMethod.SendContent();
-                        }
-                        catch
-                        {
-                        }
+                        try { BotMethod.SendContent(); }
+                        catch { }
                         finally
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання…  Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
-
                             await BotMethod.AskNextAsync(bot, chatId, cancellationToken: cancellationToken);
                         }
-
-                    break;
+                        break;
 
                     case "F":
-
                         await bot.SendMessage(chatId, "Виберіть опцію:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
-                    
-                    break;
+                        break;
 
                     case "G":
-
-                        try
-                        {
-                            BotMethod.EndSession();
-                        }
-                        catch
-                        {
-                        }
+                        try { BotMethod.EndSession(); }
+                        catch { }
                         finally
                         {
                             await bot.SendMessage(chatId, "Ой, ця функція ще в процесі навчання…  Я ще вчуся, але скоро зможу це зробити!", cancellationToken: cancellationToken);
                         }
-
-                    break;
+                        break;
 
                     default:
-
                         await bot.SendMessage(chatId, "Ой-Ой! Щось пішло не так...", cancellationToken: cancellationToken);
-
-                    break;
+                        break;
                 }
             }
         }
