@@ -13,11 +13,8 @@
 
 
   <ItemGroup>
-    <Folder Include="Bot\" />
-    <Folder Include="Bot\Handlers\" />
     <Folder Include="Bot\Lib\" />
     <Folder Include="Bot\Lib\Keyboards\" />
-    <Folder Include="Bot\Services\" />
     <Folder Include="Data\" />
   </ItemGroup>
   
