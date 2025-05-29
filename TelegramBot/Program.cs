@@ -12,27 +12,33 @@ namespace TelegramBot
     class Program
     {
         private static TelegramBotClient? botClient;
-        private static object? contentKey;
         private static Dictionary<long, string> userMoods = new();
 
         static async Task Main()
         {
-            Console.InputEncoding = Encoding.Unicode;
-            Console.OutputEncoding = Encoding.Unicode;
+            Console.OutputEncoding = Encoding.UTF8; // ✅ правильне кодування
+            Console.InputEncoding = Encoding.UTF8;
+
+            Console.WriteLine("[INFO] Ініціалізація...");
 
             string? token = Environment.GetEnvironmentVariable("TOKEN");
 
             if (string.IsNullOrEmpty(token))
             {
-                Console.WriteLine("❌ TOKEN не задано! Будь ласка, додай змінну оточення 'TOKEN'.");
+                Console.WriteLine("[ERROR] Не вдалося отримати токен із змінної середовища 'TOKEN'.");
                 return;
+            }
+            else
+            {
+                Console.WriteLine("[DEBUG] Токен успішно зчитано.");
             }
 
             botClient = new TelegramBotClient(token);
             using var cts = new CancellationTokenSource();
 
             var me = await botClient.GetMe();
-            Console.WriteLine($"@{me.Username} Запущений... Натисніть Enter щоб зупинити.");
+            Console.WriteLine($"[INFO] Бот @{me.Username} запущено.");
+            Console.WriteLine("[INFO] Очікування повідомлень...");
 
             var receiverOptions = new ReceiverOptions
             {
@@ -174,7 +180,7 @@ namespace TelegramBot
 
         private static Task ErrorHandler(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Помилка: {exception.Message}");
+            Console.WriteLine($"[ERROR] {exception.Message}");
             return Task.CompletedTask;
         }
     }
