@@ -12,9 +12,10 @@ using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.MapGet("/", () => "Бот працює через polling!"); // Railway пінгуватиме цей endpoint
+app.MapGet("/", () => "Бот працює через polling!");
 
 string? token = Environment.GetEnvironmentVariable("TOKEN");
+
 if (string.IsNullOrEmpty(token))
 {
     Console.WriteLine("[ERROR] Не вдалося отримати токен із змінної середовища 'TOKEN'.");
