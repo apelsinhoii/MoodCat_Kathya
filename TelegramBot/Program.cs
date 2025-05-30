@@ -12,11 +12,38 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+var environment = builder.Environment.EnvironmentName;
+
+string connectionString;
+
+if (environment == "Development")
+{
+    connectionString = builder.Configuration.GetConnectionString("Default")!;
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlite(connectionString));
+}
+else
+{
+    connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        Console.WriteLine("[ERROR] Не знайдено DATABASE_URL!");
+        return;
+    }
+
+    var dbUri = new Uri(connectionString.Replace("postgres://", "https://"));
+    var userInfo = dbUri.UserInfo.Split(':');
+
+    var npgsqlConnection = $"Host={dbUri.Host};Port={dbUri.Port};Database={dbUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(npgsqlConnection));
+}
 
 var app = builder.Build();
 
@@ -41,9 +68,9 @@ var receiverOptions = new ReceiverOptions
     DropPendingUpdates = true
 };
 
-var genContext = new AppDbContextFactory();
-var dbContext = genContext.CreateDbContext(args);
-await dbContext.Database.EnsureCreatedAsync();
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+await dbContext.Database.MigrateAsync();
 
 botClient.StartReceiving(
     async (bot, update, cancellationToken) =>
@@ -55,7 +82,7 @@ botClient.StartReceiving(
                 var user = message.From;
 
                 UserService service = new(dbContext);
-                await service.RegisterUserAsync(user!.Id, user!.FirstName);
+                await service.RegisterUserAsync(user!.Id, user.FirstName);
                 await bot.SendMessage(message.Chat.Id, "Привіт! Я MoodCat, твій пухнастий помічник у світі настроїв! Обери, що тобі потрібно:", replyMarkup: Keyboard.MainMenu, cancellationToken: cancellationToken);
             }
         }
