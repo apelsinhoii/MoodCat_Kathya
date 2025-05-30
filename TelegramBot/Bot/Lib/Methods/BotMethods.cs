@@ -170,29 +170,19 @@ public static class BotMethod
         var photoRecommendations = new Dictionary<string, List<string>>
         {
             ["HO"] = new() {
-            "https://www.pinterest.com/pin/7670261860724049/",
-            "https://www.pinterest.com/pin/8303580558345194/",
-            "https://www.pinterest.com/pin/349029039900813195/"
+             "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
         },
             ["SO"] = new() {
-            "https://www.pinterest.com/pin/158963061843053257/",
-            "https://www.pinterest.com/pin/252201647878066532/",
-            "https://www.pinterest.com/pin/1829656093443152/"
+             "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
         },
             ["AO"] = new() {
-            "https://www.pinterest.com/pin/21955116929284559/",
-            "https://www.pinterest.com/pin/588493876344702640/",
-            "https://www.pinterest.com/pin/587508713931107197/"
+            "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
         },
             ["TO"] = new() {
-            "https://www.pinterest.com/pin/1127870300457803121/",
-            "https://www.pinterest.com/pin/290974825946988980/",
-            "https://www.pinterest.com/pin/905997650049093910/"
+            "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
         },
             ["CO"] = new() {
-            "https://www.pinterest.com/pin/15129348743576316/",
-            "https://www.pinterest.com/pin/167829523609590613/",
-            "https://www.pinterest.com/pin/584905070391345502/"
+             "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
         }
         };
 
