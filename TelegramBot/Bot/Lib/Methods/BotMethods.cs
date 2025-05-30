@@ -75,6 +75,7 @@ public static class BotMethod
 
     public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
+
         string response = contentType switch
         {
             "movies" => currUserMood switch
@@ -167,25 +168,6 @@ public static class BotMethod
         }
         };
 
-        var photoRecommendations = new Dictionary<string, List<string>>
-        {
-            ["HO"] = new() {
-             "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
-        },
-            ["SO"] = new() {
-             "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
-        },
-            ["AO"] = new() {
-            "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
-        },
-            ["TO"] = new() {
-            "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
-        },
-            ["CO"] = new() {
-             "https://i.pinimg.com/originals/83/03/58/8303580558345194.jpg"
-        }
-        };
-
         var rand = new Random();
         string recommendation;
 
@@ -193,23 +175,18 @@ public static class BotMethod
         {
             var list = animeRecommendations[currUserMood];
             recommendation = list[rand.Next(list.Count)];
-            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
         }
         else if (contentType == "movies" && filmRecommendations.ContainsKey(currUserMood))
         {
             var list = filmRecommendations[currUserMood];
             recommendation = list[rand.Next(list.Count)];
-            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
-        }
-        else if (contentType == "photos" && photoRecommendations.ContainsKey(currUserMood))
-        {
-            var list = photoRecommendations[currUserMood];
-            var photoUrl = list[rand.Next(list.Count)];
-            await bot.SendPhotoAsync(chatId, photoUrl, cancellationToken: cancellationToken);
         }
         else
         {
-            await bot.SendTextMessageAsync(chatId, "Упс, щось пішло не так... Можливо, тип контенту або настрій не підтримується.", cancellationToken: cancellationToken);
+            recommendation = "Упс, щось пішло не так... Можливо, тип контенту або настрій не підтримується.";
         }
+
+        await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
     }
+
 }
