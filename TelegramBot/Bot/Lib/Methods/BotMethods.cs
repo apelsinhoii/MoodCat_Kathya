@@ -75,6 +75,7 @@ public static class BotMethod
 
     public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
+
         string response = contentType switch
         {
             "movies" => currUserMood switch
@@ -109,7 +110,6 @@ public static class BotMethod
 
         await bot.SendTextMessageAsync(chatId, response, cancellationToken: cancellationToken);
 
-        // Контент за настроєм
         var animeRecommendations = new Dictionary<string, List<string>>
         {
             ["HO"] = new() {
