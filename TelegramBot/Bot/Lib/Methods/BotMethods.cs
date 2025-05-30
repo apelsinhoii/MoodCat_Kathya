@@ -68,44 +68,48 @@ public static class BotMethod
         await bot.SendTextMessageAsync(chatId, "Що далі?", replyMarkup: nextOptions, cancellationToken: cancellationToken);
     }
 
-    public static async Task SendContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
+    public static void SendContent()
     {
-        var (response, recommendation) = GenerateContent(contentType, currUserMood);
-
-        await bot.SendTextMessageAsync(chatId, response, cancellationToken: cancellationToken);
-        await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
+        throw new NotImplementedException();
     }
 
-    public static (string response, string recommendation) GenerateContent(string contentType, string currUserMood)
+    public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
-        var moodResponses = new Dictionary<string, Dictionary<string, string>>
+        string response = contentType switch
         {
-            ["movies"] = new()
+            "movies" => currUserMood switch
             {
-                ["HO"] = "Мур-мур! Ось фільми, які подарують тобі багато радості та тепла, наче пухнастик, що весело ганяється за мотузочкою!",
-                ["SO"] = "Іноді хочеться посумувати, загорнувшись у ковдру, як котик у клубочок. Ось фільми, що допоможуть пережити ці моменти.",
-                ["AO"] = "Перемкни свою злість у пригоди! Ось список фільмів, де герої, як кіт, що вирішив підкорити вершину шафи, як би тяжко не було, ніколи не здається!",
-                ["TO"] = "Втома буває у всіх, навіть у хвостатих мандрівників. Ось фільми, що допоможуть відпочити та зарядитися затишком.",
-                ["CO"] = "Ці фільми огорнуть тебе спокоєм, як тепле муркотіння поруч. Вдихни, видихни – і просто насолоджуйся."
+                "HO" => "Мур-мур! Ось фільми, які подарують тобі багато радості та тепла, наче пухнастик, що весело ганяється за мотузочкою!",
+                "SO" => "Іноді хочеться посумувати, загорнувшись у ковдру, як котик у клубочок. Ось фільми, що допоможуть пережити ці моменти.",
+                "AO" => "Перемкни свою злість у пригоди! Ось список фільмів, де герої, як кіт, що вирішив підкорити вершину шафи, як би тяжко не було, ніколи не здається!",
+                "TO" => "Втома буває у всіх, навіть у хвостатих мандрівників. Ось фільми, що допоможуть відпочити та зарядитися затишком.",
+                "CO" => "Ці фільми огорнуть тебе спокоєм, як тепле муркотіння поруч. Вдихни, видихни – і просто насолоджуйся.",
+                _ => "Йой.."
             },
-            ["anime"] = new()
+            "anime" => currUserMood switch
             {
-                ["HO"] = "Муркотливий світ аніме чекає! Ось історії, які подарують тобі сміх і радість, наче котик, що знайшов нову коробку!",
-                ["SO"] = "Якщо душа просить глибоких емоцій, ось аніме, що огорне тебе ніжними почуттями, як теплі лапки у холодний день.",
-                ["AO"] = "Пора на справжню пригоду! Ці аніме такі ж динамічні, як кіт, що женеться за лазерним променем по всій кімнаті!",
-                ["TO"] = "Іноді хочеться просто полежати і нічого не робити... Ось аніме, що допоможуть розслабитися та відпочити.",
-                ["CO"] = "Спокійне аніме, що подарує затишок, наче муркотіння улюбленого пухнастика під боком."
+                "HO" => "Муркотливий світ аніме чекає! Ось історії, які подарують тобі сміх і радість, наче котик, що знайшов нову коробку!",
+                "SO" => "Якщо душа просить глибоких емоцій, ось аніме, що огорне тебе ніжними почуттями, як теплі лапки у холодний день.",
+                "AO" => "Пора на справжню пригоду! Ці аніме такі ж динамічні, як кіт, що женеться за лазерним променем по всій кімнаті!",
+                "TO" => "Іноді хочеться просто полежати і нічого не робити... Ось аніме, що допоможуть розслабитися та відпочити.",
+                "CO" => "Спокійне аніме, що подарує затишок, наче муркотіння улюбленого пухнастика під боком.",
+                _ => "Йой.."
             },
-            ["photos"] = new()
+            "photos" => currUserMood switch
             {
-                ["HO"] = "Ось для тебе наймиліші фото, сповнені тепла і радості! Нехай вони піднімуть настрій, як сонечко на підвіконні!",
-                ["SO"] = "Навіть у сумних моментах важливо знати, що тебе розуміють. Ось фото, які огорнуть тебе теплом, наче м’який хвостик.",
-                ["AO"] = "Готовий до вибуху емоцій? Ось картинки, що запалять в тобі енергію, наче кіт, який вирішив побігати о третій ночі!",
-                ["TO"] = "Час для відпочинку! Ці зображення такі ж затишні, як котик, що скрутився калачиком поруч із тобою.",
-                ["CO"] = "Моменти спокою важливі для всіх – навіть для пухнастиків. Ось фотографії, що огорнуть тебе гармонією та теплом."
-            }
+                "HO" => "Ось для тебе наймиліші фото, сповнені тепла і радості! Нехай вони піднімуть настрій, як сонечко на підвіконні!",
+                "SO" => "Навіть у сумних моментах важливо знати, що тебе розуміють. Ось фото, які огорнуть тебе теплом, наче м’який хвостик.",
+                "AO" => "Готовий до вибуху емоцій? Ось картинки, що запалять в тобі енергію, наче кіт, який вирішив побігати о третій ночі!",
+                "TO" => "Час для відпочинку! Ці зображення такі ж затишні, як котик, що скрутився калачиком поруч із тобою.",
+                "CO" => "Моменти спокою важливі для всіх – навіть для пухнастиків. Ось фотографії, що огорнуть тебе гармонією та теплом.",
+                _ => "Йой.."
+            },
+            _ => "Ой-ой! Щось пішло не так..."
         };
 
+        await bot.SendTextMessageAsync(chatId, response, cancellationToken: cancellationToken);
+
+        // Контент за настроєм
         var animeRecommendations = new Dictionary<string, List<string>>
         {
             ["HO"] = new() {
@@ -164,24 +168,25 @@ public static class BotMethod
         }
         };
 
-        string response = moodResponses.TryGetValue(contentType, out var moodDict) && moodDict.TryGetValue(currUserMood, out var moodResponse)
-            ? moodResponse
-            : "Йой... Щось пішло не так 🐾";
-
         var rand = new Random();
-        string recommendation = contentType switch
+        string recommendation;
+
+        if (contentType == "anime" && animeRecommendations.ContainsKey(currUserMood))
         {
-            "anime" when animeRecommendations.ContainsKey(currUserMood) => GetRandom(animeRecommendations[currUserMood], rand),
-            "movies" when filmRecommendations.ContainsKey(currUserMood) => GetRandom(filmRecommendations[currUserMood], rand),
-            "photos" => "[Тут можуть бути фото – поки що не реалізовано 🖼️]", // можна потім реалізувати
-            _ => "Упс, не вдалося знайти рекомендацію 😿"
-        };
+            var list = animeRecommendations[currUserMood];
+            recommendation = list[rand.Next(list.Count)];
+        }
+        else if (contentType == "movies" && filmRecommendations.ContainsKey(currUserMood))
+        {
+            var list = filmRecommendations[currUserMood];
+            recommendation = list[rand.Next(list.Count)];
+        }
+        else
+        {
+            recommendation = "Упс, щось пішло не так... Можливо, тип контенту або настрій не підтримується.";
+        }
 
-        return (response, recommendation);
+        await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
     }
-
-    private static string GetRandom(List<string> list, Random rand) =>
-        list.Count > 0 ? list[rand.Next(list.Count)] : "Список порожній 😿";
-
 
 }
