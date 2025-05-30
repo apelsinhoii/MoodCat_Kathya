@@ -2,6 +2,9 @@ using System;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBot.Bot.Services;
+using TelegramBot.Data;
+using TelegramBot.Services;
 
 
 namespace TelegramBot.Bot.Handlers.CallbackHandlers;
@@ -9,14 +12,13 @@ namespace TelegramBot.Bot.Handlers.CallbackHandlers;
 public class MoodHandler : ICallbackHandler
 {
     private static readonly HashSet<string> MoodCodes = new() { "HO", "SO", "AO", "TO", "CO", "C" };
-
     public bool CanHandle(string data) => MoodCodes.Contains(data);
-
 
     public async Task HandleAsync(
         ITelegramBotClient bot,
         CallbackQuery callbackQuery,
-        Dictionary<long, string> userMoods,
+        string currUserMood,
+        AppDbContext context,
         CancellationToken cancellationToken)
     {
         var chatId = callbackQuery.Message.Chat.Id;
@@ -47,7 +49,9 @@ public class MoodHandler : ICallbackHandler
             case "AO":
             case "TO":
             case "CO":
-                userMoods[chatId] = data;
+                currUserMood = data;
+                MoodService service = new(context);
+                service.UpdateMoodCounterAsync(callbackQuery.From.Id, currUserMood);
 
                 var contentKeyboard = new InlineKeyboardMarkup(new[]
                 {

@@ -1,5 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBot.Data;
+using TelegramBot.Services;
 
 namespace TelegramBot.Bot.Lib.Methods;
 
@@ -15,9 +17,33 @@ public static class BotMethod
         throw new NotImplementedException();
     }
 
-    public static void ViewStatistics()
+    public static async Task ViewStatistics(long tgId, AppDbContext context, ITelegramBotClient bot, long chatId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var analizer = new StatisticsService(context);
+        MoodAnalysisResult analysis = await analizer.AnalyzeUserMoodAsync(tgId);
+
+        string message;
+        if (analysis is not null)
+        {
+            message = $"Найчастіший настрій: {analysis.MostFrequentMood}\n";
+            foreach (var mood in analysis.MoodCounters)
+            {
+                message = message + $"\n{mood.Key}: {mood.Value} ({analysis.MoodRatios[mood.Key]}%)";
+            }
+            await bot.SendTextMessageAsync(
+                     chatId,
+                     message,
+                     cancellationToken: cancellationToken
+                 );
+        }
+        else
+        {
+            await bot.SendTextMessageAsync(
+                     chatId,
+                     "Nothing happened :(",
+                     cancellationToken: cancellationToken
+                 );
+        }
     }
 
     public static void EndSession()
@@ -47,16 +73,12 @@ public static class BotMethod
         throw new NotImplementedException();
     }
 
-    public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, Dictionary<long, string> userMoods, CancellationToken cancellationToken)
+    public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
-        if (!userMoods.TryGetValue(chatId, out string? mood))
-        {
-            mood = "Neutral";
-        }
 
         string response = contentType switch
         {
-            "movies" => mood switch
+            "movies" => currUserMood switch
             {
                 "HO" => "Мур-мур! Ось фільми, які подарують тобі багато радості та тепла, наче пухнастик, що весело ганяється за мотузочкою!",
                 "SO" => "Іноді хочеться посумувати, загорнувшись у ковдру, як котик у клубочок. Ось фільми, що допоможуть пережити ці моменти.",
@@ -65,7 +87,7 @@ public static class BotMethod
                 "CO" => "Ці фільми огорнуть тебе спокоєм, як тепле муркотіння поруч. Вдихни, видихни – і просто насолоджуйся.",
                 _ => "Йой.."
             },
-            "anime" => mood switch
+            "anime" => currUserMood switch
             {
                 "HO" => "Муркотливий світ аніме чекає! Ось історії, які подарують тобі сміх і радість, наче котик, що знайшов нову коробку!",
                 "SO" => "Якщо душа просить глибоких емоцій, ось аніме, що огорне тебе ніжними почуттями, як теплі лапки у холодний день.",
@@ -74,7 +96,7 @@ public static class BotMethod
                 "CO" => "Спокійне аніме, що подарує затишок, наче муркотіння улюбленого пухнастика під боком.",
                 _ => "Йой.."
             },
-            "photos" => mood switch
+            "photos" => currUserMood switch
             {
                 "HO" => "Ось для тебе наймиліші фото, сповнені тепла і радості! Нехай вони піднімуть настрій, як сонечко на підвіконні!",
                 "SO" => "Навіть у сумних моментах важливо знати, що тебе розуміють. Ось фото, які огорнуть тебе теплом, наче м’який хвостик.",

@@ -13,7 +13,8 @@ namespace TelegramBot.Bot.Services
             new MoodHandler(),
             new SettingsHandler(),
             new ContentHandler(),
-            new MainMenuHandler()
+            new MainMenuHandler(),
+            new MoodStatistHandler()
         };
         }
 

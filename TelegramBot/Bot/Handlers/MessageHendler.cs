@@ -8,7 +8,7 @@ namespace TelegramBot.TelegramBot.Bot.Handlers;
 
 public class MessageHandler
 {
-    [Obsolete]
+   
     public async Task HandleAsync(ITelegramBotClient bot, Message message, CancellationToken cancellationToken)
     {
         if (message.Type != MessageType.Text || string.IsNullOrEmpty(message.Text))

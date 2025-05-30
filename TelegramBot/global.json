@@ -1,0 +1,8 @@
+{
+  "sdk": {
+    "version": "SDK_VERSION"
+  },
+  "ConnectionStrings": {
+    "Default": "Data Source=UserInfo.db;"
+  }
+}
