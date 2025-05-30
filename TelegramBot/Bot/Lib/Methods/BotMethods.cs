@@ -75,7 +75,6 @@ public static class BotMethod
 
     public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
-
         string response = contentType switch
         {
             "movies" => currUserMood switch
@@ -168,6 +167,35 @@ public static class BotMethod
         }
         };
 
+        var photoRecommendations = new Dictionary<string, List<string>>
+        {
+            ["HO"] = new() {
+            "https://www.pinterest.com/pin/7670261860724049/",
+            "https://www.pinterest.com/pin/8303580558345194/",
+            "https://www.pinterest.com/pin/349029039900813195/"
+        },
+            ["SO"] = new() {
+            "https://www.pinterest.com/pin/158963061843053257/",
+            "https://www.pinterest.com/pin/252201647878066532/",
+            "https://www.pinterest.com/pin/1829656093443152/"
+        },
+            ["AO"] = new() {
+            "https://www.pinterest.com/pin/21955116929284559/",
+            "https://www.pinterest.com/pin/588493876344702640/",
+            "https://www.pinterest.com/pin/587508713931107197/"
+        },
+            ["TO"] = new() {
+            "https://www.pinterest.com/pin/1127870300457803121/",
+            "https://www.pinterest.com/pin/290974825946988980/",
+            "https://www.pinterest.com/pin/905997650049093910/"
+        },
+            ["CO"] = new() {
+            "https://www.pinterest.com/pin/15129348743576316/",
+            "https://www.pinterest.com/pin/167829523609590613/",
+            "https://www.pinterest.com/pin/584905070391345502/"
+        }
+        };
+
         var rand = new Random();
         string recommendation;
 
@@ -175,18 +203,23 @@ public static class BotMethod
         {
             var list = animeRecommendations[currUserMood];
             recommendation = list[rand.Next(list.Count)];
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
         }
         else if (contentType == "movies" && filmRecommendations.ContainsKey(currUserMood))
         {
             var list = filmRecommendations[currUserMood];
             recommendation = list[rand.Next(list.Count)];
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
+        }
+        else if (contentType == "photos" && photoRecommendations.ContainsKey(currUserMood))
+        {
+            var list = photoRecommendations[currUserMood];
+            var photoUrl = list[rand.Next(list.Count)];
+            await bot.SendPhotoAsync(chatId, photoUrl, cancellationToken: cancellationToken);
         }
         else
         {
-            recommendation = "Упс, щось пішло не так... Можливо, тип контенту або настрій не підтримується.";
+            await bot.SendTextMessageAsync(chatId, "Упс, щось пішло не так... Можливо, тип контенту або настрій не підтримується.", cancellationToken: cancellationToken);
         }
-
-        await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
     }
-
 }
