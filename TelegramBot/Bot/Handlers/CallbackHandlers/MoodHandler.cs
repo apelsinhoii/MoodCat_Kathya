@@ -50,6 +50,9 @@ public class MoodHandler : ICallbackHandler
             case "TO":
             case "CO":
                 currUserMood = data;
+                var userId = callbackQuery.From.Id;
+
+                CurrentMoodManager.SetMood(userId, data);
                 MoodService service = new(context);
                 service.UpdateMoodCounterAsync(callbackQuery.From.Id, currUserMood);
 
@@ -66,6 +69,7 @@ public class MoodHandler : ICallbackHandler
                     replyMarkup: contentKeyboard,
                     cancellationToken: cancellationToken
                 );
+
                 break;
         }
     }

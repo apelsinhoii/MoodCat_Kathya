@@ -2,6 +2,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 
 using TelegramBot.Bot.Lib.Methods;
+using TelegramBot.Bot.Services;
 using TelegramBot.Data;
 
 namespace TelegramBot.Bot.Handlers.CallbackHandlers;
@@ -22,6 +23,8 @@ public class ContentHandler : ICallbackHandler
 
         if (!string.IsNullOrEmpty(contentType))
         {
+            var userId = query.From.Id;
+            currUserMood = CurrentMoodManager.GetMood(userId);
             await BotMethod.GenerateContent(bot, query.Message.Chat.Id, contentType, currUserMood, cancellationToken);
             await BotMethod.AskNextAsync(bot, query.Message.Chat.Id, cancellationToken);
         }
