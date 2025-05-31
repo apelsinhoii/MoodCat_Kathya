@@ -77,7 +77,6 @@ public static class BotMethod
 
     public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
-        // Основне текстове повідомлення
         string response = contentType switch
         {
             "movies" => currUserMood switch
@@ -112,7 +111,6 @@ public static class BotMethod
 
         await bot.SendTextMessageAsync(chatId, response, cancellationToken: cancellationToken);
 
-        // Рекомендації для аніме
         var animeRecommendations = new Dictionary<string, List<string>>
         {
             ["HO"] = new() {
@@ -142,7 +140,6 @@ public static class BotMethod
         }
         };
 
-        // Рекомендації для фільмів
         var filmRecommendations = new Dictionary<string, List<string>>
         {
             ["HO"] = new() {
@@ -172,34 +169,60 @@ public static class BotMethod
         }
         };
 
+        var photoRecommendations = new Dictionary<string, List<string>>
+        {
+            ["HO"] = new() {
+            "https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg",
+            "https://cdn.pixabay.com/photo/2016/02/10/16/37/cat-1192026_1280.jpg"
+        },
+            ["SO"] = new() {
+            "https://cdn.pixabay.com/photo/2018/03/28/12/35/cat-3266670_1280.jpg",
+            "https://cdn.pixabay.com/photo/2020/04/07/04/48/cat-5012833_1280.jpg"
+        },
+            ["AO"] = new() {
+            "https://cdn.pixabay.com/photo/2016/10/13/09/06/cat-1731475_1280.jpg",
+            "https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg"
+        },
+            ["TO"] = new() {
+            "https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_1280.jpg",
+            "https://cdn.pixabay.com/photo/2020/02/09/08/44/cat-4831935_1280.jpg"
+        },
+            ["CO"] = new() {
+            "https://cdn.pixabay.com/photo/2016/01/05/13/58/cat-1123016_1280.jpg",
+            "https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg"
+        }
+        };
+
         var rand = new Random();
-        string recommendation;
+        string recommendation = "Упс, щось пішло не так...";
 
         if (contentType == "anime" && animeRecommendations.ContainsKey(currUserMood))
         {
             var list = animeRecommendations[currUserMood];
             recommendation = list[rand.Next(list.Count)];
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
         }
         else if (contentType == "movies" && filmRecommendations.ContainsKey(currUserMood))
         {
             var list = filmRecommendations[currUserMood];
             recommendation = list[rand.Next(list.Count)];
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
+        }
+        else if (contentType == "photos" && photoRecommendations.ContainsKey(currUserMood))
+        {
+            var list = photoRecommendations[currUserMood];
+            var photoUrl = list[rand.Next(list.Count)];
+            await bot.SendPhotoAsync(
+                chatId,
+                InputFile.FromUri(photoUrl),
+                caption: "Нехай це фото подарує тобі трішки радості 🐾",
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken
+            );
         }
         else
         {
-            recommendation = "Упс, щось пішло не так... Можливо, тип контенту або настрій не підтримується.";
+            await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
         }
-
-        await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
-
-        await bot.SendPhotoAsync(
-            chatId,
-            InputFile.FromUri("https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg"),
-            caption: "Нехай це фото подарує тобі трішки радості 🐾",
-            parseMode: ParseMode.Html,
-            cancellationToken: cancellationToken
-        );
     }
-
-
 }
