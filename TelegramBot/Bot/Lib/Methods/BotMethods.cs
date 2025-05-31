@@ -2,6 +2,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Data;
 using TelegramBot.Services;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types;
 
 namespace TelegramBot.Bot.Lib.Methods;
 
@@ -75,7 +77,7 @@ public static class BotMethod
 
     public static async Task GenerateContent(ITelegramBotClient bot, long chatId, string contentType, string currUserMood, CancellationToken cancellationToken)
     {
-
+        // Основне текстове повідомлення
         string response = contentType switch
         {
             "movies" => currUserMood switch
@@ -110,6 +112,7 @@ public static class BotMethod
 
         await bot.SendTextMessageAsync(chatId, response, cancellationToken: cancellationToken);
 
+        // Рекомендації для аніме
         var animeRecommendations = new Dictionary<string, List<string>>
         {
             ["HO"] = new() {
@@ -139,6 +142,7 @@ public static class BotMethod
         }
         };
 
+        // Рекомендації для фільмів
         var filmRecommendations = new Dictionary<string, List<string>>
         {
             ["HO"] = new() {
@@ -187,6 +191,15 @@ public static class BotMethod
         }
 
         await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
+
+        await bot.SendPhotoAsync(
+            chatId,
+            InputFile.FromUri("https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg"),
+            caption: "Нехай це фото подарує тобі трішки радості 🐾",
+            parseMode: ParseMode.Html,
+            cancellationToken: cancellationToken
+        );
     }
+
 
 }
