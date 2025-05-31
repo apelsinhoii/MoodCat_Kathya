@@ -169,28 +169,33 @@ public static class BotMethod
         }
         };
 
-        var photoRecommendations = new Dictionary<string, List<string>>
+        var photoRecommendations = new Dictionary<string, List<(string url, string caption)>>
         {
-            ["HO"] = new() {
-            "https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg",
-            "https://cdn.pixabay.com/photo/2016/02/10/16/37/cat-1192026_1280.jpg"
-        },
-            ["SO"] = new() {
-            "https://cdn.pixabay.com/photo/2018/03/28/12/35/cat-3266670_1280.jpg",
-            "https://cdn.pixabay.com/photo/2020/04/07/04/48/cat-5012833_1280.jpg"
-        },
-            ["AO"] = new() {
-            "https://cdn.pixabay.com/photo/2016/10/13/09/06/cat-1731475_1280.jpg",
-            "https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg"
-        },
-            ["TO"] = new() {
-            "https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_1280.jpg",
-            "https://cdn.pixabay.com/photo/2020/02/09/08/44/cat-4831935_1280.jpg"
-        },
-            ["CO"] = new() {
-            "https://cdn.pixabay.com/photo/2016/01/05/13/58/cat-1123016_1280.jpg",
-            "https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg"
-        }
+            ["HO"] = new()
+    {
+        ("https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg", "Цей котик заряджає позитивом на весь день ☀️"),
+        ("https://cdn.pixabay.com/photo/2016/02/10/16/37/cat-1192026_1280.jpg", "Поглянь у ці очі — щастя поруч! 🐾")
+    },
+            ["SO"] = new()
+    {
+        ("https://cdn.pixabay.com/photo/2018/03/28/12/35/cat-3266670_1280.jpg", "Навіть коли сумно, є хтось, хто чекає на обійми 🫂"),
+        ("https://cdn.pixabay.com/photo/2020/04/07/04/48/cat-5012833_1280.jpg", "Це фото — ковток тепла для душі 💛")
+    },
+            ["AO"] = new()
+    {
+        ("https://cdn.pixabay.com/photo/2016/10/13/09/06/cat-1731475_1280.jpg", "Готовий до пригод разом з цим вусатим героєм? 💥"),
+        ("https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg", "Пухнаста рішучість дивиться на тебе 😼")
+    },
+            ["TO"] = new()
+    {
+        ("https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_1280.jpg", "Цей спокійний момент — для тебе 💤"),
+        ("https://cdn.pixabay.com/photo/2020/02/09/08/44/cat-4831935_1280.jpg", "Пауза. Глибокий вдих. І муркотіння 🧘‍♂️")
+    },
+            ["CO"] = new()
+    {
+        ("https://cdn.pixabay.com/photo/2016/01/05/13/58/cat-1123016_1280.jpg", "Хай це фото подарує тобі мить гармонії 🌙"),
+        ("https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg", "Тихе муркотіння у галасливому світі 🌿")
+    }
         };
 
         var rand = new Random();
@@ -211,11 +216,11 @@ public static class BotMethod
         else if (contentType == "photos" && photoRecommendations.ContainsKey(currUserMood))
         {
             var list = photoRecommendations[currUserMood];
-            var photoUrl = list[rand.Next(list.Count)];
+            var (photoUrl, photoCaption) = list[rand.Next(list.Count)];
             await bot.SendPhotoAsync(
                 chatId,
                 InputFile.FromUri(photoUrl),
-                caption: "Нехай це фото подарує тобі трішки радості 🐾",
+                caption: photoCaption,
                 parseMode: ParseMode.Html,
                 cancellationToken: cancellationToken
             );
@@ -224,5 +229,6 @@ public static class BotMethod
         {
             await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
         }
+
     }
 }
