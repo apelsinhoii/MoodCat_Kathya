@@ -169,33 +169,32 @@ public static class BotMethod
         }
         };
 
-        var photoRecommendations = new Dictionary<string, List<(string url, string caption)>>
+        var photoRecommendations = new Dictionary<string, List<string>>
         {
-            ["HO"] = new()
-    {
-        ("https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg", "Цей котик заряджає позитивом на весь день ☀️"),
-        ("https://cdn.pixabay.com/photo/2016/02/10/16/37/cat-1192026_1280.jpg", "Поглянь у ці очі — щастя поруч! 🐾")
-    },
-            ["SO"] = new()
-    {
-        ("https://cdn.pixabay.com/photo/2018/03/28/12/35/cat-3266670_1280.jpg", "Навіть коли сумно, є хтось, хто чекає на обійми 🫂"),
-        ("https://cdn.pixabay.com/photo/2020/04/07/04/48/cat-5012833_1280.jpg", "Це фото — ковток тепла для душі 💛")
-    },
-            ["AO"] = new()
-    {
-        ("https://cdn.pixabay.com/photo/2016/10/13/09/06/cat-1731475_1280.jpg", "Готовий до пригод разом з цим вусатим героєм? 💥"),
-        ("https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg", "Пухнаста рішучість дивиться на тебе 😼")
-    },
-            ["TO"] = new()
-    {
-        ("https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_1280.jpg", "Цей спокійний момент — для тебе 💤"),
-        ("https://cdn.pixabay.com/photo/2020/02/09/08/44/cat-4831935_1280.jpg", "Пауза. Глибокий вдих. І муркотіння 🧘‍♂️")
-    },
-            ["CO"] = new()
-    {
-        ("https://cdn.pixabay.com/photo/2016/01/05/13/58/cat-1123016_1280.jpg", "Хай це фото подарує тобі мить гармонії 🌙"),
-        ("https://cdn.pixabay.com/photo/2016/03/27/07/08/cat-1285634_1280.jpg", "Тихе муркотіння у галасливому світі 🌿")
-    }
+            ["HO"] = new() {
+            "https://cdn.pixabay.com/photo/2018/01/03/19/17/cat-3059075_1280.jpg",
+        "https://cdn.pixabay.com/photo/2020/01/19/16/44/cat-4778387_1280.jpg",
+        "https://media.istockphoto.com/id/1389862392/photo/womans-hand-stroking-a-ginger-cat-on-isolated-white-background.jpg?s=612x612&w=0&k=20&c=DW07OmTZBTG0u2A8McZfmXkIW_7VXCAwDpVIRhUfqQw="
+        },
+            ["SO"] = new() {
+            "https://cdn.pixabay.com/photo/2022/01/16/14/20/cat-6942183_1280.jpg",
+        "https://cdn.pixabay.com/photo/2023/08/18/15/02/cat-8198720_1280.jpg",
+        "https://media.istockphoto.com/id/2040984869/photo/big-eyed-naughty-cat-looking-at-the-target-from-behind-the-marble-table.jpg?s=612x612&w=0&k=20&c=uh2Nr_JLchR1ZGvdHXq1n7shhXuHPruOKLQD5wlRH9U="
+        },
+            ["AO"] = new() {
+             "https://cdn.pixabay.com/photo/2022/05/21/02/40/cat-7210553_1280.jpg",
+        "https://media.istockphoto.com/id/1434414228/photo/stern-sad-cat-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=wis7NGP0_4_Vwti3xioilh3NfYrwHO-JoRMvFVzr6Ck=",
+        "https://media.istockphoto.com/id/1350191166/photo/fluffy-silver-colored-cat-looking-grumpy-and-displeased-on-brown-background.jpg?s=612x612&w=0&k=20&c=RaFMKMnzxn68KWVSo13XwPeauc7mJUAT4RJ6_KqEX-0="
+        },
+            ["TO"] = new() {
+            "https://cdn.pixabay.com/photo/2020/02/20/12/12/cat-4864605_1280.jpg",
+        "https://media.istockphoto.com/id/483799085/photo/lazy-fat-cat-sleeping-on-the-couch.jpg?s=612x612&w=0&k=20&c=FVbhNThXzzYRtJi2r5FPp6rJBYSDZdtSF7VXwMorH0o="
+        },
+            ["CO"] = new() {
+             "https://cdn.pixabay.com/photo/2020/02/02/14/03/cat-4813099_1280.jpg",
+        "https://cdn.pixabay.com/photo/2024/05/18/08/16/tomcat-8769861_1280.jpg",
+        "https://cdn.pixabay.com/photo/2020/04/04/09/55/cat-5001570_1280.jpg"
+        }
         };
 
         var rand = new Random();
@@ -216,11 +215,11 @@ public static class BotMethod
         else if (contentType == "photos" && photoRecommendations.ContainsKey(currUserMood))
         {
             var list = photoRecommendations[currUserMood];
-            var (photoUrl, photoCaption) = list[rand.Next(list.Count)];
+            var photoUrl = list[rand.Next(list.Count)];
             await bot.SendPhotoAsync(
                 chatId,
                 InputFile.FromUri(photoUrl),
-                caption: photoCaption,
+                caption: "🐱",
                 parseMode: ParseMode.Html,
                 cancellationToken: cancellationToken
             );
@@ -229,6 +228,5 @@ public static class BotMethod
         {
             await bot.SendTextMessageAsync(chatId, recommendation, cancellationToken: cancellationToken);
         }
-
     }
 }
